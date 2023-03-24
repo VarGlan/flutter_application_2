@@ -65,11 +65,31 @@ class _SignUpFormState extends State<SignUpForm> {
 
   @override
   Widget build(BuildContext context) {
+    void _updateFormProgress(){
+      var progress = 0.0;
+      final controllers = [
+        _firstNameTextController,
+        _lastNameTextController,
+        _usernameTextController
+      ];
+
+      for (final controller in controllers){
+        if (controller.value.text.isNotEmpty) {
+        progress += 1 / controllers.length;
+        }
+      }
+      setState(() {
+        _formProgress = progress;
+      });
+      
+    }
+    
     void _showWelcomeScreen(){
       Navigator.of(context).pushNamed('/welcome');
       
     }
     return Form(
+      onChanged: _updateFormProgress,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -97,23 +117,24 @@ class _SignUpFormState extends State<SignUpForm> {
             ),
           ),
           TextButton(
-            style: ButtonStyle(
-              foregroundColor: MaterialStateProperty.resolveWith(
-                  (Set<MaterialState> states) {
-                return states.contains(MaterialState.disabled)
-                    ? null
-                    : Colors.white;
-              }),
-              backgroundColor: MaterialStateProperty.resolveWith(
-                  (Set<MaterialState> states) {
-                return states.contains(MaterialState.disabled)
-                    ? null
-                    : Colors.blue;
-              }),
-            ),
-            onPressed: _showWelcomeScreen,
-            child: const Text('Sign up'),
-          ),
+  style: ButtonStyle(
+    foregroundColor: MaterialStateProperty.resolveWith(
+        (Set<MaterialState> states) {
+      return states.contains(MaterialState.disabled)
+          ? null
+          : Colors.white;
+    }),
+    backgroundColor: MaterialStateProperty.resolveWith(
+        (Set<MaterialState> states) {
+      return states.contains(MaterialState.disabled)
+          ? null
+          : Colors.blue;
+    }),
+  ),
+  onPressed:
+      _formProgress == 1 ? _showWelcomeScreen : null, // UPDATED
+  child: const Text('Sign up'),
+),
         ],
       ),
     );
